@@ -303,23 +303,28 @@ open class BarChartRenderer: BarLineScatterCandleBubbleRenderer
                 break
             }
             
+            var color = dataSet.color(atIndex: 0)
             if !isSingleColor
             {
                 // Set the color for the currently drawn value. If the index is out of bounds, reuse colors.
-                context.setFillColor(dataSet.color(atIndex: j).cgColor)
+                color = dataSet.color(atIndex: j)
             }
             
-            context.fill(barRect)
-            
-            if drawBorder
-            {
-                context.setStrokeColor(borderColor.cgColor)
-                context.setLineWidth(borderWidth)
-                context.stroke(barRect)
-            }
+            renderBar(in: context, rect: barRect, color: color, drawBorder: drawBorder, borderColor: borderColor, borderWidth: borderWidth)
         }
         
         context.restoreGState()
+    }
+    
+    @objc open func renderBar(in context: CGContext, barRect: CGRect, color: NSUIColor, drawBorder: Bool, borderColor: NSUIColor, borderWidth: CGFloat) {
+        context.setFillColor(color.cgColor)
+        context.fill(barRect)
+        
+        if drawBorder {
+            context.setStrokeColor(borderColor.cgColor)
+            context.setLineWidth(borderWidth)
+            context.stroke(barRect)
+        }
     }
     
     open func prepareBarHighlight(
