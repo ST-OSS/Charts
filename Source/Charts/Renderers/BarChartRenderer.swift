@@ -310,7 +310,7 @@ open class BarChartRenderer: BarLineScatterCandleBubbleRenderer
                 color = dataSet.color(atIndex: j)
             }
             
-            renderBar(in: context, rect: barRect, color: color, drawBorder: drawBorder, borderColor: borderColor, borderWidth: borderWidth)
+            renderBar(in: context, barRect: barRect, color: color, drawBorder: drawBorder, borderColor: borderColor, borderWidth: borderWidth)
         }
         
         context.restoreGState()
