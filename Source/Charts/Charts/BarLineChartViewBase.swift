@@ -94,6 +94,8 @@ open class BarLineChartViewBase: ChartViewBase, BarLineScatterCandleBubbleChartD
     #endif
     internal var _panGestureRecognizer: NSUIPanGestureRecognizer!
     
+    internal var _longPressGestureRecognizer: UILongPressGestureRecognizer!
+    
     /// flag that indicates if a custom viewport offset has been set
     private var _customViewPortEnabled = false
     
@@ -124,16 +126,19 @@ open class BarLineChartViewBase: ChartViewBase, BarLineScatterCandleBubbleChartD
         _tapGestureRecognizer = NSUITapGestureRecognizer(target: self, action: #selector(tapGestureRecognized(_:)))
         _doubleTapGestureRecognizer = NSUITapGestureRecognizer(target: self, action: #selector(doubleTapGestureRecognized(_:)))
         _doubleTapGestureRecognizer.nsuiNumberOfTapsRequired = 2
-        _panGestureRecognizer = NSUIPanGestureRecognizer(target: self, action: #selector(panGestureRecognized(_:)))
+//        _panGestureRecognizer = NSUIPanGestureRecognizer(target: self, action: #selector(panGestureRecognized(_:)))
+        _longPressGestureRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(longPressGestureRecognized(_:)))
+        _longPressGestureRecognizer.minimumPressDuration = 0.0
         
-        _panGestureRecognizer.delegate = self
+//        _panGestureRecognizer.delegate = self
         
         self.addGestureRecognizer(_tapGestureRecognizer)
         self.addGestureRecognizer(_doubleTapGestureRecognizer)
-        self.addGestureRecognizer(_panGestureRecognizer)
+        self.addGestureRecognizer(_longPressGestureRecognizer)
+//        self.addGestureRecognizer(_panGestureRecognizer)
         
         _doubleTapGestureRecognizer.isEnabled = _doubleTapToZoomEnabled
-        _panGestureRecognizer.isEnabled = _dragXEnabled || _dragYEnabled
+//        _panGestureRecognizer.isEnabled = _dragXEnabled || _dragYEnabled
 
         #if !os(tvOS)
             _pinchGestureRecognizer = NSUIPinchGestureRecognizer(target: self, action: #selector(BarLineChartViewBase.pinchGestureRecognized(_:)))
@@ -671,6 +676,35 @@ open class BarLineChartViewBase: ChartViewBase, BarLineScatterCandleBubbleChartD
         }
     }
     #endif
+    
+    @objc private func longPressGestureRecognized(_ recognizer: UILongPressGestureRecognizer) {
+        guard _data != nil else { return }
+        guard self.isHighlightPerDragEnabled else { return }
+        
+        let h = getHighlightByTouchPoint(recognizer.location(in: self))
+        
+        switch recognizer.state {
+        case .began, .changed:
+            let old = self.lastHighlighted
+            if old != h {
+                self.lastHighlighted = h
+                self.highlightValue(h, callDelegate: true)
+            }
+        case .ended, .cancelled:
+            if unhighlightOnTouchUp {
+                self.lastHighlighted = nil
+                self.highlightValue(nil, callDelegate: true)
+            } else {
+                let old = self.lastHighlighted
+                if old != h {
+                    self.lastHighlighted = h
+                    self.highlightValue(h, callDelegate: true)
+                }
+            }
+        default:
+            break
+        }
+    }
     
     @objc private func panGestureRecognized(_ recognizer: NSUIPanGestureRecognizer)
     {

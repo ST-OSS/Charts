@@ -21,6 +21,7 @@ types are aliased to either their UI* implementation (on iOS) or their NS* imple
     public typealias NSUIPinchGestureRecognizer = UIPinchGestureRecognizer
     public typealias NSUIRotationGestureRecognizer = UIRotationGestureRecognizer
 #endif
+    
     public typealias NSUIScreen = UIScreen
 
 	public typealias NSUIDisplayLink = CADisplayLink
