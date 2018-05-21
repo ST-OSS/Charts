@@ -78,6 +78,8 @@ open class BarLineChartViewBase: ChartViewBase, BarLineScatterCandleBubbleChartD
     /// **default**: An instance of YAxisRenderer
     @objc open lazy var rightYAxisRenderer = YAxisRenderer(viewPortHandler: _viewPortHandler, yAxis: rightAxis, transformer: _rightAxisTransformer)
     
+    @objc open var unhighlightOnTouchUp: Bool = false
+    
     internal var _leftAxisTransformer: Transformer!
     internal var _rightAxisTransformer: Transformer!
     
@@ -785,6 +787,11 @@ open class BarLineChartViewBase: ChartViewBase, BarLineScatterCandleBubbleChartD
             {
                 _outerScrollView?.nsuiIsScrollEnabled = true
                 _outerScrollView = nil
+            }
+            
+            if self.lastHighlighted != nil && unhighlightOnTouchUp {
+                self.lastHighlighted = nil
+                self.highlightValue(nil, callDelegate: true)
             }
         }
     }
