@@ -648,9 +648,6 @@ open class BarChartRenderer: BarLineScatterCandleBubbleRenderer
                 
                 let trans = dataProvider.getTransformer(forAxis: set.axisDependency)
                 
-                context.setFillColor(set.highlightColor.cgColor)
-                context.setAlpha(set.highlightAlpha)
-                
                 let isStack = high.stackIndex >= 0 && e.isStacked
                 
                 let y1: Double
@@ -681,11 +678,18 @@ open class BarChartRenderer: BarLineScatterCandleBubbleRenderer
                 
                 setHighlightDrawPos(highlight: high, barRect: barRect)
                 
-                context.fill(barRect)
+                renderHighlightedBar(in: context, barRect: barRect, fillColor: set.highlightColor, fillAlpha: set.highlightAlpha)
             }
         }
         
         context.restoreGState()
+    }
+    
+    @objc open func renderHighlightedBar(in context: CGContext, barRect rect: CGRect, fillColor color: NSUIColor, fillAlpha alpha: CGFloat) {
+        context.setFillColor(color.cgColor)
+        context.setAlpha(alpha)
+        
+        context.fill(rect)
     }
     
     /// Sets the drawing position of the highlight object based on the riven bar-rect.
