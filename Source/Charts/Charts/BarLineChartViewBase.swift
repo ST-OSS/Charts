@@ -129,6 +129,7 @@ open class BarLineChartViewBase: ChartViewBase, BarLineScatterCandleBubbleChartD
 //        _panGestureRecognizer = NSUIPanGestureRecognizer(target: self, action: #selector(panGestureRecognized(_:)))
         _longPressGestureRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(longPressGestureRecognized(_:)))
         _longPressGestureRecognizer.minimumPressDuration = 0.0
+        _longPressGestureRecognizer.delegate = self
         
 //        _panGestureRecognizer.delegate = self
         
@@ -969,9 +970,9 @@ open class BarLineChartViewBase: ChartViewBase, BarLineScatterCandleBubbleChartD
             }
         #endif
         
-        if gestureRecognizer is NSUIPanGestureRecognizer,
+        if (gestureRecognizer is NSUIPanGestureRecognizer || gestureRecognizer is UILongPressGestureRecognizer),
             otherGestureRecognizer is NSUIPanGestureRecognizer,
-            gestureRecognizer == _panGestureRecognizer
+            (gestureRecognizer == _panGestureRecognizer || gestureRecognizer == _longPressGestureRecognizer)
         {
             var scrollView = self.superview
             while scrollView != nil && !(scrollView is NSUIScrollView)
